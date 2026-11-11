@@ -1,0 +1,11 @@
+services:
+  auth-flyway:
+    image: flyway/flyway:latest
+    container_name: auth_flyway_dev
+    command: migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://host.docker.internal:5432/auth_database
+      FLYWAY_USER: auth_user
+      FLYWAY_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./database/migrations:/flyway/sql:ro
