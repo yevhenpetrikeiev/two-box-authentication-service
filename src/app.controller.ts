@@ -3,7 +3,6 @@ import { AppService } from './app.service.js';
 import { RegisterUserDTO } from "./DTO's/register-user.dto.js";
 import { LoginUserDTO } from "./DTO's/login-user.dto.js";
 import { DeleteUserDTO } from "./DTO's/delete-user.dto.js";
-import { GetUserByEmailDTO } from "./DTO's/get-user.dto.js";
 
 @Controller()
 export class AppController {
@@ -26,14 +25,6 @@ export class AppController {
       throw new Error('Invalid email or password');
     }
     return { message: 'User signed in successfully' };
-  }
-
-  @Get('/user')
-  async getUserByEmail(
-    @Body() userData: GetUserByEmailDTO,
-  ): Promise<{ email: string; password: string } | null> {
-    const { email } = userData;
-    return this.appService.getUserByEmail(email);
   }
 
   @Delete('/delete')

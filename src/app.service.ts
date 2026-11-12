@@ -35,18 +35,6 @@ export class AppService {
     }
   }
 
-  async getUserByEmail(
-    email: string,
-  ): Promise<{ email: string; password: string } | null> {
-    try {
-      const user = await this.userRepo.getUserByEmail(email);
-      return user;
-    } catch (error) {
-      console.log('can not get user: ', error);
-      return null;
-    }
-  }
-
   async deleteUser(email: string, password: string): Promise<void> {
     try {
       const user = await this.userRepo.getUserByEmail(email);
