@@ -18,6 +18,7 @@ export class AppController {
     return { message: 'User created successfully' };
   }
 
+  @Post('/signin')
   async signIn(@Body() userData: LoginUserDTO): Promise<{ message: string }> {
     const { email, password } = userData;
     const isSignedIn = await this.appService.signIn(email, password);
