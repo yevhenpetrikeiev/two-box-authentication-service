@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UserReposetory } from './repository/users.repository.js';
+import { UserReposetory } from '../repository/users.repository.js';
 import {
   comparePasswords,
   hashPassword,
-} from './shared/security/encription.js';
+} from '../shared/security/encription.js';
 
 @Injectable()
-export class AppService {
+export class AuthService {
   constructor(private readonly userRepo: UserReposetory) {}
   async signUp(email: string, password: string): Promise<void> {
     try {
