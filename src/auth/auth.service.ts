@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { UserReposetory } from '../repository/users.repository.js';
 import {
   comparePasswords,
@@ -7,13 +7,18 @@ import {
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepo: UserReposetory) {}
+  constructor(
+    private readonly userRepo: UserReposetory,
+    private readonly logger: Logger,
+  ) {}
   async signUp(email: string, password: string): Promise<void> {
     try {
       await this.userRepo.createUser(email, await hashPassword(password));
-      console.log('User created successfully');
+      this.logger.log(`User created successfully: ${email}`);
     } catch (error) {
-      console.error('Error creating user:', error);
+      this.logger.error(
+        `Error creating user: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -22,15 +27,17 @@ export class AuthService {
     try {
       const user = await this.userRepo.getUserByEmail(email);
       if (!user) {
-        throw new Error('User not found');
+        throw new UnauthorizedException('User not found');
       }
       const isPasswordValid = await comparePasswords(password, user.password);
       if (!isPasswordValid) {
-        throw new Error('Invalid password');
+        throw new UnauthorizedException('Invalid password');
       }
       return true;
     } catch (error) {
-      console.error('Error signing in:', error);
+      this.logger.error(
+        `Error signing in user: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -39,17 +46,19 @@ export class AuthService {
     try {
       const user = await this.userRepo.getUserByEmail(email);
       if (!user) {
-        throw new Error('user not found');
+        throw new UnauthorizedException('user not found');
       }
       const isPasswordValid = await comparePasswords(password, user.password);
       if (!isPasswordValid) {
-        throw new Error('Invalid password');
+        throw new UnauthorizedException('Invalid password');
       }
 
       await this.userRepo.deleteUser(email);
-      console.log('User deleted successfully');
+      this.logger.log(`User deleted successfully: ${email}`);
     } catch (error) {
-      console.error('Error deleting user:', error);
+      this.logger.error(
+        `Error deleting user: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
