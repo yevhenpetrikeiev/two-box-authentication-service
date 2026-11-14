@@ -15,9 +15,9 @@ export class UserReposetory {
 
   async getUserByEmail(
     email: string,
-  ): Promise<{ email: string; password: string } | null> {
+  ): Promise<{ email: string; password: string; id: string } | null> {
     const result = await this.pool.query(
-      'SELECT email, password FROM users WHERE email = $1',
+      'SELECT email, password, id FROM users WHERE email = $1',
       [email],
     );
     if (result.rows.length === 0) {
