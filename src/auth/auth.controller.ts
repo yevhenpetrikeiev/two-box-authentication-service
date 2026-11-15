@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
 import { RegisterUserDTO } from "../DTO's/register-user.dto.js";
 import { LoginUserDTO } from "../DTO's/login-user.dto.js";
 import { AuthService } from './auth.service.js';
 import { DeleteUserDTO } from "../DTO's/delete-user.dto.js";
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AuthController {
@@ -18,15 +19,19 @@ export class AuthController {
   }
 
   @Post('/signin')
-  async signIn(@Body() userData: LoginUserDTO): Promise<{ message: string }> {
+  async signIn(
+    @Body() userData: LoginUserDTO,
+  ): Promise<{ message: string; data: any }> {
     const { email, password } = userData;
     const isSignedIn = await this.authService.signIn(email, password);
     if (!isSignedIn) {
       throw new Error('Invalid email or password');
     }
-    return { message: 'User signed in successfully' };
+
+    return { message: 'User signed in successfully', data: isSignedIn };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/delete')
   async deleteUser(
     @Body() userData: DeleteUserDTO,

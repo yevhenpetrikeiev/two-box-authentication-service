@@ -4,12 +4,14 @@ import {
   comparePasswords,
   hashPassword,
 } from '../shared/security/encription.js';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepo: UserReposetory,
     private readonly logger: Logger,
+    private readonly jwtService: JwtService,
   ) {}
   async signUp(email: string, password: string): Promise<void> {
     try {
@@ -23,7 +25,10 @@ export class AuthService {
     }
   }
 
-  async signIn(email: string, password: string): Promise<boolean> {
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
     try {
       const user = await this.userRepo.getUserByEmail(email);
       if (!user) {
@@ -33,7 +38,9 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid password');
       }
-      return true;
+      const payload = { email: user.email, sub: user.id };
+      const token = await this.jwtService.signAsync(payload);
+      return { access_token: token };
     } catch (error) {
       this.logger.error(
         `Error signing in user: ${error instanceof Error ? error.message : String(error)}`,
