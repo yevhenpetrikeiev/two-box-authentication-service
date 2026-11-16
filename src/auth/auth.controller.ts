@@ -21,7 +21,7 @@ export class AuthController {
   @Post('/signin')
   async signIn(
     @Body() userData: LoginUserDTO,
-  ): Promise<{ message: string; data: any }> {
+  ): Promise<{ message: string; data: { access_token: string } }> {
     const { email, password } = userData;
     const isSignedIn = await this.authService.signIn(email, password);
     if (!isSignedIn) {
