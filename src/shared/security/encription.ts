@@ -1,15 +1,15 @@
 import * as argon2 from 'argon2';
 
-const hashPassword = async (password: string): Promise<string> => {
-  const hashedPassword = await argon2.hash(password);
+const hash = async (string: string): Promise<string> => {
+  const hashedPassword = await argon2.hash(string);
   return hashedPassword;
 };
 
-const comparePasswords = async (
-  plainPassword: string,
-  hashedPassword: string,
+const compareHashes = async (
+  plainString: string,
+  hashedString: string,
 ): Promise<boolean> => {
-  return await argon2.verify(hashedPassword, plainPassword);
+  return await argon2.verify(plainString, hashedString);
 };
 
-export { hashPassword, comparePasswords };
+export { hash, compareHashes };
